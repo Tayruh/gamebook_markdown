@@ -2,7 +2,7 @@
 
 This script is for converting various markdown formats into a single standard markdown file, a dot file for rendering in graphviz, and a directory of epub-ready XHTML files. It was designed to assist in the creation of gamebooks, but it will still be useful for creating epubs in general.
 
-The supported input files for conversion to markdown are TiddlyWiki exported JSON, Twine archive HTML, Twee script, and Sadako script files. These along with standard markdown files are supported for conversion to graphviz dot files and epub files.
+The supported input files for conversion to markdown are TiddlyWiki exported JSON, Twine publshed/archived HTML, Twee script, and Sadako script files. These along with standard markdown files are supported for conversion to graphviz dot files and epub files.
 
 The following is an example of a graphviz flow chart automatically generated from links and settings placed within your story.
 
@@ -35,6 +35,14 @@ Any number of input files are allowed, with the exception of TiddlyWiki JSON whi
 ## Markdown
 
 This converter only supports a small amount of markdown, as the goal of the project was to easily create gamebooks, not complex pages with tables and such. All unsupported markdown can still be used through normal HTML markup. 
+
+Supported scripting formats:
+
+* [TiddlyWiki](https://tiddlywiki.com/)
+* [Twine](http://twinery.org/)
+* [Tweego](https://www.motoslave.net/tweego/)
+* [Sadako](https://github.com/Tayruh/sadako)
+* [CommonMark](https://commonmark.org/)
 
 Supported markdown:
 
