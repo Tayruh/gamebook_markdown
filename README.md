@@ -514,7 +514,7 @@ or in other markup:
 
 Similar to how numbers don't make for great section names, section names like "stat info" isn't a great section title, and "An Explanation of Character Stats" isn't a very convenient section name to link to.
 
-To get around this, you can declare a name that is only for labeling a section. This will be displayed inside of the div that links direct to instead of the section name like normal. The one expection to this is that if `epub:titles` is given a numeric value for automatic naming, the assigned will be used instead of the label or section name.
+To get around this, you can declare a name that is only for labeling a section. This will be displayed inside of the div that links direct to instead of the section name like normal. The one exception to this is that if `epub:titles` is given a numeric value for automatic naming, the assigned will be used instead of the label or section name.
 
 Section names are defined as such:
 
