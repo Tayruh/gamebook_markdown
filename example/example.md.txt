@@ -2,7 +2,7 @@
 
 <!--
     
-    gamebook_markup example for Sadako script
+    gamebook_markup example for standard markdown
 
 -->
 
@@ -47,16 +47,16 @@
 
 <!-- epub:nav
     <ol>
-        <li>[Rules](#rules:]</li>
-        <li>[:!Story Start @: 1:]</li>
-        <li>[:About Author @: credits)</li>
+        <li>[Rules](#rules)</li>
+        <li>[!Story Start](#1)</li>
+        <li>[About Author](#credits)</li>
     </ol>
 -->
 
 
 # title
 
-<h2><center>**Example Book**<br/>*just a sample*</center></h2>
+## <center>**Example Book**<br/>*just a sample*</center>
 
 <!-- nograph -->
 <!-- epub:type title-page -->
@@ -72,11 +72,10 @@ This is the title page.
 <!-- epub:type toc -->
 
 <ul>
-    <li>[Rules](#rules:]</li>
-    <li>[:!Story Start @: 1:]</li>
-    <li>[:About Author @: credits)</li>
+    <li>[Rules](#rules)</li>
+    <li>[!Story Start](#1)</li>
+    <li>[About Author](#credits)</li>
 </ul>
-
 
 # rules
 
@@ -213,11 +212,8 @@ You and Alicia locate Chelsea just in time to save her from falling into a trap.
 
 <center>**The End**</center>
 
-
 # credits
 
 <!-- nograph -->
 
 This is the credits page.
-
-
