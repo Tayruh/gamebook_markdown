@@ -44,12 +44,13 @@
 			text = text.replace(/__((?:[^']|_(?!_))*)__/g, "<u>$1</u>");
 
 			// convert header markdown
-            text = text.replace(/(?<=^|\s+)!+/g, function(match) {
-                return "#".repeat(match.length + 1);
+            text = text.replace(/(?<=(?:^|\n)[\t ]*)(!+)[\t ]+(.+)/g, function(m, p1, p2) {
+				if (p1.length === 1) return "<h1>" + p2.trim() + "</h1>\n";
+                return "#".repeat(p1.length) + " " + p2.trim();
 			});
 
 			// convert links
-			text = text.replace(/\[\[s*([^\]|]+)(?:\|([^\]]*))?\]\]/g, function(m, p1, p2) {
+			text = text.replace(/\[\[((?:(?!\||\]\])[^])+)(?:\|((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2) {
 				return "[" + p1.trim() + "](#" + (p2 ? p2.trim() : p1.trim()) + ")";
 			});
 			
@@ -73,7 +74,7 @@
 
 	var convertTwineToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
-			return text.replace(/\[\[((?:(?!\||<-|->)[^\r\n])*)(?:(\||<-|->)([^\r\n]+))?\]\]/g, function(m, p1, p2, p3) {
+			return text.replace(/\[\[((?:(?!\||<-|->|\]\])[^])+)(?:(\||<-|->)((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2, p3) {
 				if (p2 === "<-") return "[" + p3.trim() + "](#" + p1.trim() + ")";
 				return "[" + p1.trim() + "](#" + (p3 ? p3.trim() : p1.trim()) + ")";
 			});
@@ -115,7 +116,7 @@
 
 	var convertTweeToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
-			return text.replace(/\[\[((?:(?!\||<-|->)[^\r\n])*)(?:(\||<-|->)([^\r\n]+))?\]\]/g, function(m, p1, p2, p3) {
+			return text.replace(/\[\[((?:(?!\||<-|->|\]\])[^])+)(?:(\||<-|->)((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2, p3) {
 				if (p2 === "<-") return "[" + p3.trim() + "](#" + p1.trim() + ")";
 				return "[" + p1.trim() + "](#" + (p3 ? p3.trim() : p1.trim()) + ")";
 			});
@@ -146,7 +147,7 @@
 	
 	var convertSadakoToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
-			return text.replace(/\[:\s*(?:#\s*)?((?:(?!@:|:\])(?:\s|\S))+)(?:@:((?:\s|\S)*))?:\]/g, function(m, p1, p2) {
+			return text.replace(/\[:((?:(?!@:|:\])[^])+)(?:@:((?:(?!:\])[^])+))?:\]/g, function(m, p1, p2) {
 				return "[" + p1.trim() + "](#" + (p2 ? p2.trim() : p1.trim()) + ")";
 			});
 		};
@@ -312,7 +313,7 @@
 						if (remove.length) options += '<br/><font ' + remove_style + ">" + remove.join("<br/>") + '</font>';
 						options += '>';
 					}
-					else if (entry.label !== null) options = 'label="' + entry.title + ": " + entry.label. join("\n") + '"';
+					else if (entry.label !== null) options = 'label="' + entry.title.replace(/"/g, '\\"') + ": " + entry.label. join("\n") + '"';
 					return options;
 				};
 

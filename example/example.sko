@@ -1,4 +1,10 @@
-# cover
+## cover
+
+<!--
+    
+    gamebook_markup example for Sadako script
+
+-->
 
 <center><img src="images/cover.jpg"></center>
 
@@ -41,16 +47,16 @@
 
 <!-- epub:nav
     <ol>
-        <li>[Rules](#rules)</li>
-        <li>[!Story Start](#1)</li>
-        <li>[About Author](#credits)</li>
+        <li>[:Rules @: rules:]</li>
+        <li>[:!Story Start @: 1:]</li>
+        <li>[:About Author @: credits:]</li>
     </ol>
 -->
 
 
-# title
+## title
 
-## <center>**Example Book**<br/>*just a sample*</center>
+<h2><center>**Example Book**<br/>*just a sample*</center></h2>
 
 <!-- nograph -->
 <!-- epub:type title-page -->
@@ -58,7 +64,7 @@
 This is the title page.
 
 
-# contents
+## contents
 
 <!-- epub:label Table of Contents -->
 
@@ -66,12 +72,12 @@ This is the title page.
 <!-- epub:type toc -->
 
 <ul>
-    <li>[Rules](#rules)</li>
-    <li>[!Story Start](#1)</li>
-    <li>[About Author](#credits)</li>
+    <li>[:Rules @: rules:]</li>
+    <li>[:!Story Start @: 1:]</li>
+    <li>[:About Author @: credits:]</li>
 </ul>
 
-# rules
+## rules
 
 <!-- epub:label Rules and Character Creation -->
 <!-- nograph -->
@@ -80,7 +86,7 @@ This is the title page.
 This is where you would describe the rules of your game book and create a character.
 
 
-# 1
+## 1
 
 <!-- start -->
 <!-- epub:titles start 1 -->
@@ -93,38 +99,38 @@ This is where you would describe the rules of your game book and create a charac
 
 Story intro. Arrive at house with your friends.
 
-Turn to [2](#2).
+Turn to [:2:].
 
 
-# 2
+## 2
 
 <!-- door is locked -->
 <!-- epub:shuffle start -->
 
 The front door is locked. You need to look for the key.
 
-If you'd like to check above the door, turn to [3](#3). If you'd like to examine the potted plants beneath the window, turn to [4](#4). If you think that the loose tile on the walkway needs further inspection, turn to [5](#5).
+If you'd like to check above the door, turn to [:3:]. If you'd like to examine the potted plants beneath the window, turn to [:4:]. If you think that the loose tile on the walkway needs further inspection, turn to [:5:].
 
 
-# 3
+## 3
 
 <!-- search above door -->
 
 You don't find anything above the door.
 
-Turn to [6](#6).
+Turn to [:6:].
 
 
-# 4
+## 4
 
 <!-- search potted plants -->
 
 You don't find anything under the plants.
 
-Turn to [6](#6).
+Turn to [:6:].
 
 
-# 5
+## 5
 
 <!-- 
     search loose tiles
@@ -136,10 +142,10 @@ You find a key under a loose tile.
 
 *Add HOUSE KEY to your list of items.*
 
-Turn to [7](#7).
+Turn to [:7:].
 
 
-# 6
+## 6
 
 <!-- alicia finds key -->
 <!-- flags house key -->
@@ -148,10 +154,10 @@ Behind you Alicia shouts, "I found it!" She gives you the key.
 
 *Add HOUSE KEY to your list of items.*
 
-Turn to [7](#7).
+Turn to [:7:].
 
 
-# 7
+## 7
 
 <!-- loose end -->
 <!-- flags -house key -->
@@ -162,19 +168,19 @@ You enter the house.
 
 *Remove HOUSE KEY from your list of items.*
 
-Turn to [8](#8).
+Turn to [:8:].
 
 
-# 8
+## 8
 
 <!-- enter the house -->
 
 You and your friends enter the house. You decide to split up.
 
-If you go with Chelsea, turn to [9](#9). If you decide to go with Alicia, turn to [10](#10).
+If you go with Chelsea, turn to [:9:]. If you decide to go with Alicia, turn to [:10:].
 
 
-# 9
+## 9
 
 <!-- trap -->
 <!-- bad end -->
@@ -184,7 +190,7 @@ You and Chelsea fall into a trap and die!
 <center>**Game Over**</center>
 
 
-# 10
+## 10
 
 <!-- treasure -->
 <!-- epub:shuffle end -->
@@ -194,10 +200,10 @@ You and Alicia find hidden treasure!
 
 You got what you came for and now it's time to leave!
 
-Turn to [next page](#epilogue).
+Turn to [:next page @: epilogue:].
 
 
-# epilogue
+## epilogue
 
 <!-- good end -->
 <!-- epub:titles end -->
@@ -206,7 +212,7 @@ You and Alicia locate Chelsea just in time to save her from falling into a trap.
 
 <center>**The End**</center>
 
-# credits
+## credits
 
 <!-- nograph -->
 

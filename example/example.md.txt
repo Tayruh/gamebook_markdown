@@ -1,0 +1,223 @@
+# cover
+
+<!--
+    
+    gamebook_markup example for Sadako script
+
+-->
+
+<center><img src="images/cover.jpg"></center>
+
+<!-- nograph -->
+<!-- epub:type cover -->
+<!-- epub:cover images/cover.jpg -->
+
+<!-- epub:meta 
+{
+    "title": "My Story",
+    "identifier": "urn:uuid:A1B0D67E-2E81-4DF5-9E67-A64CBE366809",
+
+    "language": "en-US",
+    "contributor": "John Smith",
+    "creator": ["Tayruh", "Jim Bob"],
+    "date": "2000-01-01T00:00:00Z",
+    "subject": "Horror, Suspense",
+    "description": "This is an epub example.",
+    "publisher": "Penguin Inc"
+}
+-->
+
+<!-- epub:css
+    .paragraph {
+        margin-top: 1.15em;
+        margin-bottom: 1.15em;
+    }
+
+    .section-title {
+        width: 100%;
+        text-align: center;
+        font-size: 1.5em;
+        padding-bottom: 1em;
+    }
+    
+    .missing a, .missing a:visited {
+   		color: red;
+   	}
+-->
+
+<!-- epub:nav
+    <ol>
+        <li>[Rules](#rules:]</li>
+        <li>[:!Story Start @: 1:]</li>
+        <li>[:About Author @: credits)</li>
+    </ol>
+-->
+
+
+# title
+
+<h2><center>**Example Book**<br/>*just a sample*</center></h2>
+
+<!-- nograph -->
+<!-- epub:type title-page -->
+
+This is the title page.
+
+
+# contents
+
+<!-- epub:label Table of Contents -->
+
+<!-- nograph -->
+<!-- epub:type toc -->
+
+<ul>
+    <li>[Rules](#rules:]</li>
+    <li>[:!Story Start @: 1:]</li>
+    <li>[:About Author @: credits)</li>
+</ul>
+
+
+# rules
+
+<!-- epub:label Rules and Character Creation -->
+<!-- nograph -->
+<!-- epub:type frontmatter -->
+
+This is where you would describe the rules of your game book and create a character.
+
+
+# 1
+
+<!-- start -->
+<!-- epub:titles start 1 -->
+<!-- epub:type bodymatter -->
+<!-- epub:collection start -->
+
+<!-- epub:include ["images/house.jpg"] -->
+
+<center><img src="images/house.jpg"/></center>
+
+Story intro. Arrive at house with your friends.
+
+Turn to [2](#2).
+
+
+# 2
+
+<!-- door is locked -->
+<!-- epub:shuffle start -->
+
+The front door is locked. You need to look for the key.
+
+If you'd like to check above the door, turn to [3](#3). If you'd like to examine the potted plants beneath the window, turn to [4](#4). If you think that the loose tile on the walkway needs further inspection, turn to [5](#5).
+
+
+# 3
+
+<!-- search above door -->
+
+You don't find anything above the door.
+
+Turn to [6](#6).
+
+
+# 4
+
+<!-- search potted plants -->
+
+You don't find anything under the plants.
+
+Turn to [6](#6).
+
+
+# 5
+
+<!-- 
+    search loose tiles
+    you find key 
+-->
+<!-- flags house key -->
+
+You find a key under a loose tile.
+
+*Add HOUSE KEY to your list of items.*
+
+Turn to [7](#7).
+
+
+# 6
+
+<!-- alicia finds key -->
+<!-- flags house key -->
+
+Behind you Alicia shouts, "I found it!" She gives you the key.
+
+*Add HOUSE KEY to your list of items.*
+
+Turn to [7](#7).
+
+
+# 7
+
+<!-- loose end -->
+<!-- flags -house key -->
+
+You unlock the door. You hand the key off to Chelsea.
+
+You enter the house.
+
+*Remove HOUSE KEY from your list of items.*
+
+Turn to [8](#8).
+
+
+# 8
+
+<!-- enter the house -->
+
+You and your friends enter the house. You decide to split up.
+
+If you go with Chelsea, turn to [9](#9). If you decide to go with Alicia, turn to [10](#10).
+
+
+# 9
+
+<!-- trap -->
+<!-- bad end -->
+
+You and Chelsea fall into a trap and die! 
+
+<center>**Game Over**</center>
+
+
+# 10
+
+<!-- treasure -->
+<!-- epub:shuffle end -->
+<!-- epub:collection end -->
+
+You and Alicia find hidden treasure!
+
+You got what you came for and now it's time to leave!
+
+Turn to [next page](#epilogue).
+
+
+# epilogue
+
+<!-- good end -->
+<!-- epub:titles end -->
+
+You and Alicia locate Chelsea just in time to save her from falling into a trap. The three of you escape with the treasure and live happily ever after.
+
+<center>**The End**</center>
+
+
+# credits
+
+<!-- nograph -->
+
+This is the credits page.
+
+
