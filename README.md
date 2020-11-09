@@ -368,7 +368,7 @@ As you can see, the metadata is defined as a JSON object. If you don't know what
 
 `date` is the publication date, not modified date.
 
-For more information, can be found [here](https://www.w3.org/publishing/epub32/epub-packages.html#sec-pkg-Metadata).
+More information can be found [here](https://www.w3.org/publishing/epub32/epub-packages.html#sec-pkg-Metadata).
 
 
 #### CSS
@@ -471,20 +471,23 @@ If the file is inside a directory that's already being included via `epub:includ
 Section names are not added to the section text by default. By using the title setting, they will be added to the top of the section inside of a div assigned the `section-title` class.
 
 Begins showing titles:
+
 ```
 <!-- epub:titles start -->
 ```
 
 Stops showing titles:
+
 ```
 <!-- epub:titles stop -->
 ```
 
-`start`/`stop` are aliases for `beginning`/`end` and `true`/`false`.
+`start`/`stop` are aliases for `begin`/`end`, `true`/`false`, and `on`/`off`.
 
 It's not always convenient to name your section numerically, as a more descriptive section name is sometimes more preferred. Using the `epub:titles` setting you can automatically name them numerically in the output.
 
 Begins showing titles named numerically, starting at 1:
+
 ```
 <!-- epub:titles start 1 -->
 ```
@@ -529,14 +532,18 @@ By default sections are assigned their own page. This is ideal for stories where
 Using the `epub:collection` setting you can collect a block of sections into a single page.
 
 Begins collecting sections:
+
 ```
 <!-- epub:collection start -->
 ```
 
 Stops collecting sections:
+
 ```
 <!-- epub:collection stop -->
 ```
+
+`start`/`stop` are aliases for `begin`/`end`, `true`/`false`, and `on`/`off`.
 
 Be aware that links to sections within a page collection will not work correctly unless titles are displayed, as it will not have a div with an ID to jump to. You'll either need to enable titles via `epub:titles` or use the `epub:label` setting for that section.
 
@@ -556,3 +563,5 @@ Stops collecting sections:
 ```
 <!-- epub:shuffle stop -->
 ```
+
+`start`/`stop` are aliases for `begin`/`end`, `true`/`false`, and `on`/`off`.
