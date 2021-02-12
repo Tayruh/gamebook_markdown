@@ -70,7 +70,7 @@ Sadako:
 Markdown:
 *italic*
 **bold**
-[link name](#destination)]
+[link name](#destination)
 # heading 1
 ## heading 2
 ### heading 3
