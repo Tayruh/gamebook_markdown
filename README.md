@@ -1,4 +1,4 @@
-## What is it?
+# What is it?
 
 This script is for converting various markdown formats into a single standard markdown file, a dot file for rendering in graphviz, and a directory of epub-ready XHTML files. It was designed to assist in the creation of gamebooks, but it will still be useful for creating epubs in general.
 
@@ -8,14 +8,14 @@ The following is an example of a graphviz flow chart automatically generated fro
 
 ![graphviz screenshot](media/img0.png)
 
-###  Example
+##  Example
 
 You can find an example here, with its compiled epub and generated png and svg flowcharts: 
 
 * [example story](example/)
 
 
-## How do you use it?
+# How do you use it?
 
 This script needs to be run from the command line. The command is run like this:
 
@@ -32,7 +32,7 @@ Any number of input files are allowed, with the exception of TiddlyWiki JSON whi
 `-e` or `--epub` converts the input to epub files.
 
 
-## Markdown
+# Markdown
 
 This converter only supports a small amount of markdown, as the goal of the project was to easily create gamebooks, not complex pages with tables and such. All unsupported markdown can still be used through normal HTML markup. 
 
@@ -69,12 +69,13 @@ Sadako:
 
 Markdown:
 *italic*
+_italic_
 **bold**
 [link name](#destination)]
 # heading 1
-## heading 2
-### heading 3
-#### heading 4
+# heading 2
+## heading 3
+### heading 4
 ```
 
 Be aware that links using markdown are assumed to be directing to other sections of markdown. For files outside of markdown (like a website or file), use normal HTML anchor links.
@@ -82,9 +83,9 @@ Be aware that links using markdown are assumed to be directing to other sections
 Also note that `!` (heading 1) in TiddlyWiki is converted to `<h1>` for markdown, while the rest are converted from `!!` to `##`. This is because `#` in markdown is used to denote a new section and section name. The sections and section name are stored separately in TiddlyWiki, so it's assigned to `#` during conversion. Therefore you'll have two level 1 headings, with the one that you defined appearing in the epub files.
 
 
-## Graphviz
+# Graphviz
 
-### Compiling
+## Compiling
 
 Graphviz is an application for creating flowcharts which are useful for seeing your project as a forest instead of the trees. Its input files are .dot files (lightly scripted files), which this converter outputs.
 
@@ -106,12 +107,12 @@ dot.exe story.dot -Tsvg -o story.svg
 ```
 
 
-### Configuration
+## Configuration
 
 I have added some configuration settings that can be applied to sections of your markdown via the `<!-- -->` comment tags.
 
 
-#### Section Labels
+### Section Labels
 
 Section names are taken from the "H1" element of markdown, which is defined by a single `#` followed by some text. In other words, this:
 
@@ -175,7 +176,7 @@ These both render the same:
 ![](media/img3.png)
 
 
-#### Flags
+### Flags
 
 You can list flags, keywords, or items that are added or removed with a section. The flags setting will be ignored as a section name.
 
@@ -234,7 +235,7 @@ Renders like this:
 The flags will be listed below the section name in the flowchart. 
 
 
-#### Excluding
+### Excluding
 
 You can choose not to graph a section (like the title page or the table of contents, etc) by including this setting in the section:
 
@@ -243,7 +244,7 @@ You can choose not to graph a section (like the title page or the table of conte
 ```
 
 
-#### Section Types
+### Section Types
 
 There are three defined section types. They are:
 
@@ -258,9 +259,9 @@ These count as the section label if no other label is given. These assigned type
 Additionally, any broken links will be displayed as a box with a gray background.
 
 
-## EPUB
+# EPUB
 
-### Compiling
+## Compiling
 
 For best results, compilng to epub should be done from the root directory of the markdown. This ensures that including files will find the correct directories.
 
@@ -268,11 +269,11 @@ Converting an epub directory to an .epub file is as simple as zipping the folder
 
 To be honest, I'm pretty sure most ebook readers will load the file just fine even without making sure the `mimetype` is first or compressed, but not doing so fails [epubcheck](https://github.com/w3c/epubcheck), so it's better to be safe.
 
-##### GUI Method
+#### GUI Method
 
 This is really easy to do if you're using a GUI archiver. Just add `mimetype` to a new archive, set compression to `none` or `store`, and save. Then drop the two folders into the archive after.
 
-##### Command Line Method
+#### Command Line Method
 
 There are probably better options available for the command line in other operating systems, but they're very limited for Windows. Winrar, winzip, and 7zip all add the file uncompressed inside the GUI, but I could not get them to do it on the command line. The best I could find (at the moment) is is this outdated port of `zip`: [gnu32 zip](http://gnuwin32.sourceforge.net/packages/zip.htm).
 
@@ -283,7 +284,7 @@ zip.exe -Xr story.epub "META-INF/" "OEBPS/"
 ```
 
 
-### Conversion
+## Conversion
 
 All input formats are converted to standard markdown before being converted to an epub. This documentation uses standard markdown for its examples, but you can use the markup of your input format for convenience.
 
@@ -304,12 +305,12 @@ Would render like so if it were missing;
 ![](media/img6.png)
 
 
-### Configuration
+## Configuration
 
 Just like with Graphviz conversion, I added some configuration settings via the `<!- -->` comment tags. The only settings that are required for successful epub conversion are `epub:nav` and `epub:meta`.
 
 
-#### Navigation
+### Navigation
 
 This is the navigation pane that appears in your ebook reader, not the table of contents that's in your book. This section is required for all epub books. This will be saved as `nav.xhtml` inside your epub directory. 
 
@@ -330,7 +331,7 @@ Navigation is defined like this:
 As you can see, it's a numbered list using the `<ol>` tag (`<ul>` bullet points throw an error). More information can be found [here](https://www.w3.org/publishing/epub32/epub-packages.html#sec-package-nav-def).
 
 
-#### Metadata Settings
+### Metadata Settings
 
 This is the information about your book, like the author, the title, the subject, etc.  This setting is required and can only be declared once.
 
@@ -371,7 +372,7 @@ As you can see, the metadata is defined as a JSON object. If you don't know what
 For more information, can be found [here](https://www.w3.org/publishing/epub32/epub-packages.html#sec-pkg-Metadata).
 
 
-#### CSS
+### CSS
 
 CSS settings are collected from each section that they're defined in and combined into a single CSS file saved as `style.css` in your epub directory.
 
@@ -379,26 +380,41 @@ They're defined like this:
 
 ```
 <!-- epub:css
-	.paragraph {
-		margin-top: 1.15em;
-		margin-bottom: 1.15em;
-	}
+    .paragraph {
+        margin-top: 1.15em;
+        margin-bottom: 1.15em;
+    }
 
-	.section-title {
-		width: 100%;
-		text-align: center;
-		font-size: 1.5em;
-		padding-bottom: 1em;
-	}
+    .section-title {
+        width: 100%;
+        text-align: center;
+        font-size: 1.5em;
+        margin-bottom: 1em;
+    }
 
-	.missing a, .missing a:visited {
-		color: red;
-	}
+	/*  */
+    .section:not(:first-of-type) {
+        margin-top: 3em;
+    }
+    
+    .missing a, .missing a:visited {
+   		color: red;
+   	}
 -->
 ```
 
+Classes:
 
-#### Landmark Types
+* **paragraph:** Every paraph in a section has this class. Paragraphs are separated by a blank link. A single carriage return inserts a `<br/>`.
+
+* **section-title:** Section names are given this class.
+
+* **section:** The entire section (including the section title) is wrapped in this class.
+
+* **missing:** This class is given to span wrapped around links for missing sections.
+
+
+### Landmark Types
 
 There are many different types of book sections that you can define. Declaring the type in a section defines that section as that landmark item. 
 
@@ -429,7 +445,7 @@ The most important are `cover`, `title-page`,`toc`, and  `bodymatter`.
 You can find more information [here](https://www.w3.org/publishing/epub32/epub-packages.html#sec-nav-landmarks).
 
 
-#### Includes
+### Includes
 
 The epub specs are very particular that any item included in the epub file must be listed in the manifest.
 
@@ -451,7 +467,7 @@ Because of how this works, you shouldn't have to worry about your markdown links
 This above code includes "test.jpg", "stylesheet.css" in the "styles" directory, and all files inside "media/images". Also notice that even single items must be declared as an array (inside quotes and square brackets).
 
 
-#### Cover Image
+### Cover Image
 
 The cover image is what displays inside your ebook reader's "book shelf" or library navigation. It can be different than the cover page inside your book. This setting can only be declared once.
 
@@ -466,7 +482,7 @@ The image will be automatically copied to your epub directory and added to the m
 If the file is inside a directory that's already being included via `epub:include`, it won't be added to the manifest twice, so you don't need to worry about that.
 
 
-#### Titles
+### Titles
 
 Section names are not added to the section text by default. By using the title setting, they will be added to the top of the section inside of a div assigned the `section-title` class.
 
@@ -507,7 +523,7 @@ or in other markup:
 [[!target]]
 ```
 
-#### Section Labels
+### Section Labels
 
 Similar to how numbers don't make for great section names, section names like "stat info" isn't a great section title, and "An Explanation of Character Stats" isn't a very convenient section name to link to.
 
@@ -522,7 +538,7 @@ Section names are defined as such:
 ```
 
 
-#### Collections
+### Collections
 
 By default sections are assigned their own page. This is ideal for stories where each section is a chapter, but less than an ideal for a gamebook where a section might only be a few sentences long, especially if you intend to go to print.
 
@@ -538,10 +554,8 @@ Stops collecting sections:
 <!-- epub:collection stop -->
 ```
 
-Be aware that links to sections within a page collection will not work correctly unless titles are displayed, as it will not have a div with an ID to jump to. You'll either need to enable titles via `epub:titles` or use the `epub:label` setting for that section.
 
-
-#### Shuffle
+### Shuffle
 
 A gamebook is no good if all sections are placed in a readable order, which is destined to happen as your story is written. The `epub:shuffle` setting rearranges the sections in your story. If `epub:titles` is used, the section will still be numerically titled in ascending order and the link names renamed and targeting the correct passages.
 
@@ -556,3 +570,89 @@ Stops collecting sections:
 ```
 <!-- epub:shuffle stop -->
 ```
+
+Be sure to avoid changing the `epub:title` settings during shuffling as it'll have unpredicable results.
+
+
+### Fixed Sections
+
+Sometimes within shuffled blocks of sections you want a few sections with hardcoded section names and locations. 
+
+A good example of this requirement are gamebooks that include puzzles which ask you to turn a section based on a solution. For example:
+
+> What animal meows? If you think you know the answer, add the letters together (where A=1, B=2, C=3, etc) and turn to that section.
+
+In this case, the answer is 24 (3+1+20=24) so you would want the section 24 to be fixed in place so that you can have the reader turn to it when they guess the correct answer.
+
+To fix the section in place as section 24, just add an `epub:fixed` setting to the section along with the section number that you wish to have it fixed to.
+
+```
+<!-- epub:fixed 24 -->
+```
+
+There are also situations in gamebooks where the puzzle involves doing something on a certain section. In this instance, the solution relies on the section that contains the puzzle. For example, let's say you have a section that tells you: 
+
+> You have found a key. If you come across a door that you think can be unlocked with the key, add 50 to the section number and turn to that section.
+
+If there is a locked door on section 30, the player can use their previous knowledge of how to use the key and turn to section 80 to unlock it.
+
+This is all well and good, but it now relies on both the section with the door and the section with unlocking to be fixed. The puzzle with break if either of the sections move. To get around this, we can use a section name as an ancor.
+
+```
+# locked door
+<-- epub:fixed 30 -->
+
+There is a locked door here.
+
+
+# unlock the door
+<!-- epub:fixed locked door + 50 -->
+
+You unlocked the door!
+```
+
+Subtraction also works. You can also refer to a fixed section in which its fixed achor references another fixed section.
+
+```
+# A
+<!-- epub:fixed C - 20 -->
+
+# C
+<!-- epub:fixed 30 -->
+
+# B
+<!-- epub:fixed A + 10 -->
+```
+
+This will put sections A, B, and C at 10, 20, and 30. As you can see, you reference sections that haven't been defined yet.
+
+There are a few things to be aware of when using fixed sections.
+
+* Don't include `-` or `+` in the section names that you intend to refer to as an anchor.
+
+* A section that anchors to another section (`test + 2`, for example) *must* be fixed. This is to avoid situations where shuffling will put a section out of bounds or in conflict with another section.
+
+* You can't fix a section outside of titled blocks (it wouldn't even make sense), and it won't be fixed if the titled blocks aren't renamed. In other words, if it's displaying the section name or label instead of the ordered section number, just disable shuffling to fix it in place. You won't be able to refer to it as an fixed anchor, however.
+
+* You can't set a fixed value tp a value outside of the current shuffled block. You also can't refer to a fixed anchor outside of the current shuffled block. For example, this will fail:
+	```
+	# A
+	<!-- epub:titles start 1 -->
+	<!-- epub:shuffle start -->
+
+	# B
+	<!-- epub:fixed 5 -->
+	This fails because it can only be values 1 through 3 for 
+	this shuffle block.
+	
+	# C
+	<!-- epub:shuffle end -->
+	
+	# D
+	<!-- epub:shuffle start -->
+	
+	# E
+	<!-- epub:fixed B + 3 -->
+	This fails because this shuffled block only 
+	includes D and E, not B.
+	```

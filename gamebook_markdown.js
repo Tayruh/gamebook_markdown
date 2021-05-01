@@ -13,7 +13,7 @@
 			throw new Error(e);
 		}
 	};
-	
+
 
 	var writeMarkdown = function(source, output) {
 		return function() {
@@ -27,9 +27,9 @@
 			return markdown;
 		}();
 	};
-	
-	
-    var convertTiddlyToMarkdown = function(source, output) {
+
+
+	var convertTiddlyToMarkdown = function(source, output) {
 		var convertMarkdown = function(text) {
 			// convert emphasis markdown
 			text = text.replace(/\/\/((?:[^/]|\/(?!\/))*)\/\//g, "*$1*");
@@ -44,17 +44,17 @@
 			text = text.replace(/__((?:[^']|_(?!_))*)__/g, "<u>$1</u>");
 
 			// convert header markdown
-            text = text.replace(/(?<=(?:^|\n)[\t ]*)(!+)[\t ]+(.+)/g, function(m, p1, p2) {
+			text = text.replace(/(?<=(?:^|\n)[\t ]*)(!+)[\t ]+(.+)/g, function(m, p1, p2) {
 				if (p1.length === 1) return "<h1>" + p2.trim() + "</h1>\n";
-                return "#".repeat(p1.length) + " " + p2.trim();
+				return "#".repeat(p1.length) + " " + p2.trim();
 			});
 
 			// convert links
 			text = text.replace(/\[\[((?:(?!\||\]\])[^])+)(?:\|((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2) {
 				return "[" + p1.trim() + "](#" + (p2 ? p2.trim() : p1.trim()) + ")";
 			});
-			
-            return text;
+
+			return text;
 		};
 
 		console.log("Converting tiddlywiki to markdown..");
@@ -79,7 +79,7 @@
 				return "[" + p1.trim() + "](#" + (p3 ? p3.trim() : p1.trim()) + ")";
 			});
 		};
-		
+
 		var unencode = function(text) {
 			text = text.replace(/\\"/g, '"');
 			text = text.replace(/\\'/g, "'");
@@ -93,26 +93,26 @@
 		return function() {
 			console.log("Converting twine archive to markdown..");
 
-			var entries = [];			
+			var entries = [];
 			var passages = source.match(/<tw-passagedata[^<]+<\/tw-passagedata>/g);
 			if (passages === null) throw new Error("Not a valid twine export HTML file.");
 
 			for (let passage of passages) {
 				let data = passage.match(/[^n]+name="((?:\\"|[^"])+)"[^>]*>((?:<(?!\/tw-passagedata)|[^<])+)<\/tw-passagedata>/);
 				if (data === null) continue;
-				
+
 				let title = unencode(data[1].trim());
 
 				let text = data[2].trim();
 				text = unencode(text);
-				text = convertLinks(text); 
+				text = convertLinks(text);
 				entries.push({"title": title, "text": text});
 			}
-			
+
 			return writeMarkdown(entries, output);
 		}();
 	};
-	
+
 
 	var convertTweeToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
@@ -139,12 +139,12 @@
 				text = convertLinks(text);
 				entries.push({"title": title, "text": text });
 			}
-			
+
 			return writeMarkdown(entries, output);
 		}();
 	};
-	
-	
+
+
 	var convertSadakoToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
 			return text.replace(/\[:((?:(?!@:|:\])[^])+)(?:@:((?:(?!:\])[^])+))?:\]/g, function(m, p1, p2) {
@@ -169,12 +169,12 @@
 				text = convertLinks(text);
 				entries.push({"title": title, "text": text });
 			}
-			
+
 			return writeMarkdown(entries, output);
 		}();
 	};
-	
-	
+
+
 	var convertMarkdownToJSON = function(source) {
 		source = source.split(/(?:^|\s)#[\t ]+/);
 
@@ -185,18 +185,15 @@
 
 			let index = entry.indexOf("\n");
 			let title = entry.substring(0, index).trim();
-
 			let text = entry.substring(index).trim();
-			text = text.replace(/\[([^\]]+)\]\(#?([^)]+)\)/g, function(m, p1, p2) {
-				return "[[" + p1 + ((p1 !== p2) ? "|" + p2 : "") + "]]";
-			});
+
 			entries.push({"title": title, "text": text });
 		}
 
 		return entries;
 	};
-	
-	
+
+
 	var convertJsonToGraphviz = function(source, output) {
 		var trimLines = function(text) {
 			text = text.replace(/<br(?: ?\/)?>/gi, "\n");
@@ -204,7 +201,7 @@
 			text = text.replace(/\r?\n[\t ]*\r?\n[\t ]*\r?\n/g, "\n");
 			return text.trim();
 		};
-		
+
 		var quote = function(text) {
 			if (/\s/.test(text)) return '"' + text.replace(/"/g, '\\"') + '"';
 			return text;
@@ -234,18 +231,15 @@
 			};
 
 			var getLinks = function(source, entries, missing) {
-				var links = source.text.match(/(?<=\[\[)((?:[^\]])*)(?=\]\])/g);
+				var links = [];
 
-				if (links !== null) {
-					for (let a = 0; a < links.length; ++a) {
-						let parts = links[a].split("|");
-						let link = (parts[1] || parts[0]).trim();
-						if (!(link in entries)) missing[quote(link)] = true;
-						links[a] = quote(link);
-					}
-				}
+				source.text.replace(/(?<!!)\[([^\]]+)\]\(#?([^)]+)\)/g, function(match, p1, p2) {
+					var link = p2;
+					if (!(link in entries)) missing[quote(link)] = true;
+					links.push(quote(link));
+				});
 
-				return links;
+				return (links.length) ? links : null;
 			};
 
 			var getColor = function(source) {
@@ -291,12 +285,12 @@
 					var options = "";
 					var add_style = 'face="monospace" point-size="11" color="steelblue"';
 					var remove_style = 'face="monospace" point-size="11" color="tomato"';
-	
+
 					if (entry.flags !== null) {
 						var flags = entry.flags.split(/\n|<br\s*\/?>/gi);
 						var add = [];
 						var remove = [];
-						
+
 						for (let item of flags) {
 							if (/\s*-\s*(.+)/.test(item)) {
 								item = item.match(/-\s*(.+)/)[1];
@@ -329,9 +323,10 @@
 						if (entry.color !== null) options += (options.length ? ", " : "") + 'color="' + entry.color + '"';
 						graph += options + "]\n";
 					}
-					
+
 					if (entry.links !== null) graph += "\t" + id + " -> " + entry.links.join(", ") + ";\n\n";
 					else if (!added) graph += "\t" + quote(entry.title) + ";\n\n";
+					else graph += "\n\n";
 				}
 
 				return graph;
@@ -374,16 +369,16 @@
 	var convertJsonToEpub = function(source, output) {
 		var convertToXHTML = function(text) {
 			// remove comments
-			text = text.replace(/(?:^|\n)[\t ]*<!--(?:-(?!->)|[^-])+\s*-->.*/g, "");
+			text = text.replace(/[\t ]*<!--(?:-(?!->)|[^-])+\s*-->.*/g, "");
 
 			// add ending slash to single tags
-			text = text.replace(/<((?:img|br)(?:[^/>]|\/(?!>))*)\s*>/gi, "<$1/>");
+			text = text.replace(/<((?:img|br|hr)(?:[^/>]|\/(?!>))*)\s*>/gi, "<$1/>");
 
 			// remove leading blank lines
 			text = text.replace(/^((?:[\t ]*\r?\n)+)/, "");
 
 			// replace markdown links with anchors
-			text = text.replace(/\[\[s*([^\]|]+)(?:\|([^\]]*))?\]\]/g, function(match, p1, p2) {
+			text = text.replace(/\[([^\]]+)\]\(#?([^)]+)\)/g, function(match, p1, p2) {
 				let link = (p2 || p1).trim()
 				return '<a href="' + link + '">' + p1.trim() + '</a>';
 			});
@@ -393,6 +388,7 @@
 
 			// replace emphasis markdown with italics tag
 			text = text.replace(/\*(?!\s)((?:[^\r\n\t* ]|[\t ](?!\*))+)\*/g, "<i>$1</i>");
+			text = text.replace(/(?<=\s|^)_((?:[^_\r\n]|_(?!\s))+)_/g, "<i>$1</i>");
 
 			// limit blanks lines to only two in a row
 			text = text.replace(/\r?\n[\t ]*\r?\n[\t ]*\r?\n/g, "\n\n");
@@ -413,19 +409,22 @@
 
 		var collectSections = function(source, output) {
 			var condenseLines = function(text) {
-				var section = "";
+				var lines = [];
 
 				for (let line of text.split(/\r?\n[\t ]*\r?\n/g)) {
 					line = line.trim();
-	
+
 					if (!line.length) continue;
-					if (/^\s*(<h[0-9]|<p|<div|<ul|<ol|<li)( [^>]|)>/i.test(line)) {
-						section += line + "\n";
+					if (/^\s*<\/?(h[0-9]|p|div|ul|ol|li)( [^>]+|)>/i.test(line)) {
+						lines.push(line);
 					}
-					else section += '<div class="paragraph">' + line + '</div>\n';
+					else lines.push('<div class="paragraph">' + line + '</div>');
 				}
 
-				return section.trim();
+				text = lines.join("\n");
+				text = text.replace(/(\r?\n\s*)(?!\s|<)/g, '<br/>');
+
+				return text;
 			};
 
 			var convertLink = function(id, text) {
@@ -445,10 +444,13 @@
 
 				var link = data.sections[entry.title].link;
 
-				data.opf += '\t\t<item id="' + link + '" href="' + link + '" media-type="application/xhtml+xml"/>\n';
+				var scripted = (/<script\s+/i.test(entry.text)) ? ' properties="scripted"' : "";
+
+				data.opf += '\t\t<item id="' + link + '" href="' + link + '" media-type="application/xhtml+xml"' + scripted + ' />\n';
 				data.spine += '\t\t<itemref idref="' + link + '"/>\n';
 
 				data.files.push([path.join(output, "OEBPS", link), html + condenseLines(convertToXHTML(entry.text)).trimStart() + "\n</body>\n</html>"]);
+				//data.files.push([path.join(output, "OEBPS", link), convertToXHTML(html + entry.text + "\n</body>\n</html>")]);
 			};
 
 			var getMeta = function(entry, data) {
@@ -493,7 +495,7 @@
 
 				data.cover = match[1].trim();
 			};
-			
+
 			var getInclude = function(entry, data) {
 				var match = entry.text.match(/<!--\s*epub:include(?:[\t ]*\n|[\t ]+)((?:-(?!->)|[^-])+)\s*-->/i);
 				if (match === null) return;
@@ -508,8 +510,20 @@
 					return Math.floor(Math.random() * (max - min + 1)) + min;
 				};
 
-				var addTitle = function(entry, title) {
-					entry.text = '<div class="section-title" id="' + entry.id + '">' + title + '</div>\n' + entry.text;
+				var addTitle = function(entry) {
+					entry.renamed = (start !== null);
+
+					if (show_titles || label) {
+						var title;
+						var label = entry.text.match(/<!--\s*epub:label\s+(.+)\s*-->/i);
+						if (label !== null) label = label[1].trim();
+
+						title = (start === null ? (label || entry.title) : entry.id);
+						//entry.text = '<div class="section-title" id="' + entry.id + '">' + title + '</div>\n' + entry.text;
+						entry.text = '<div class="section-title">' + title + '</div>\n' + entry.text;
+					}
+
+					entry.text = '<div id="'+ entry.id + '" class="section">\n\n' + entry.text.trim() + '\n\n</div>';
 				};
 
 				var entries = [];
@@ -518,39 +532,129 @@
 				var start = null;
 				var show_titles = false;
 				var collected = false;
-			
+
 				for (let id = 0; id < source.length; ++id) {
 					let entry = source[id];
-					
+
 					let match = entry.text.match(/<!--\s*epub:titles\s+(?:on|begin|start|true)(?:\s+([0-9]+))?\s*-->/i);
 					if (match !== null) {
 						show_titles = true;
 						if (match[1] !== undefined) start = parseInt(match[1]) - entries.length;
 						else start = null;
 					}
-					
+
 					if (/<!--\s*epub:collection\s+(?:on|begin|start|true)\s*-->/i.test(entry.text)) collected = true;
 					entry.collected = collected;
-					
+
+					entry.fixed = null;
+					let fixed_id = entry.text.match(/<!--\s*epub:fixed\s+(\w(?:[\t\s]*(?:\w+|[+-]))*)\s*-->/i);
+					if (fixed_id !== null) {
+						let temp;
+						if (/^[0-9]+$/.test(fixed_id[1])) entry.fixed = [parseInt(fixed_id[1])];
+						else if ((temp = fixed_id[1].split("+")).length > 1) entry.fixed = [temp[0].trim(), parseInt(temp[1])];
+						else if ((temp = fixed_id[1].split("-")).length > 1) entry.fixed = [temp[0].trim(), 0 - parseInt(temp[1])];
+						else console.log("Incorrect formatting of fixed value for '" + entry.title + "'.");
+					}
+
 					if (/<!--\s*epub:shuffle\s+(?:on|begin|start|true)(?:\s+([0-9]+))?\s*-->/i.test(entry.text)) shuffled = true;
 					if (shuffled) shuffled_entries.push(entry);
 
 					if (shuffled_entries.length && (/<!--\s*epub:shuffle\s+(?:off|end|stop|false)\s*-->/i.test(entry.text) || id === source.length - 1)) {
 						shuffled = false;
-
 						let temp = [];
+						let fixed = [];
+						let variable = [];
+						let sections = {};
+
+						// shuffle
 						for (let item of shuffled_entries) {
+							sections[item.title] = item;
+
+							if (start !== null && item.fixed !== null) {
+								if (item.fixed.length === 1) fixed.push(item);
+								else variable.push(item);
+								continue;
+							}
+
 							if (!temp.length) temp = [item];
 							else temp.splice(random(0, temp.length - 1) + random(0, 1), 0, item);
 						}
 
+						// add variable fixed according to anchors
+						let count = 10;
+						while (variable.length && count) {
+							count -= 1;
+							for (let a = 0; a < variable.length; ++a) {
+								let item = variable[a];
+								let anchor = sections[item.fixed[0]];
+								if (anchor === undefined) {
+									console.log("Fixed anchor '" + item.fixed[0] + "' assigned to '" + item.title + "' is not found within this shuffled block.");
+									item.fixed = null;
+								}
+								else if (anchor.fixed === null) {
+									console.log("Fixed anchor '" + anchor.title + "' assigned to '" + item.title + "' is not a fixed section.");
+									item.fixed = null;
+								}
+								else if (anchor.title === item.title) {
+									console.log("Fixed anchor for '" + item.title + "' is self-referencing.");
+								}
+								else if (anchor.fixed.length > 1) continue;
+								else {
+									item.fixed = [anchor.fixed[0] + item.fixed[1]];
+									fixed.push(item);
+								}
+								variable.splice(a, 1);
+								a -= 1;
+							}
+						}
+						if (!count) {
+							console.log("Exceeded loop count in fixed value assignments. Potential circular logic problem.");
+							let error = "Unassigned fixed values:";
+							for (let item of variable) {
+								error += "\n    " + item.title;
+							}
+							console.log(error);
+						}
+
+						if (fixed.length) {
+							let sorted = [];
+
+							// sort the fixed sections
+							for (let item of fixed) {
+								let a;
+								for (a = 0; a < sorted.length; ++a) {
+									if (item.fixed[0] > sorted[a].fixed[0]) continue;
+									if (item.fixed[0] === sorted[a].fixed[0]) {
+										console.log("Fixed value for '" + item.title + "' conflicts with '" + sorted[a]. title + "'.");
+									}
+									break;
+								}
+								sorted.splice(a, 0, item);
+							}
+
+							// insert fixed sections
+							for (let item of sorted) {
+								let offset = start + entries.length;
+								let index = item.fixed - offset;
+
+								if (index < 0 || index > temp.length) {
+									console.log(
+										"Fixed entry value for '" + item.title + "' should be between " +
+										offset + " and " + (offset + (shuffled_entries.length - 1)) + ". " +
+										"Value is " + (index + offset) + "."
+									);
+									index = (index < 0) ? 0 : temp.length;
+									continue;
+								}
+
+								temp.splice(index, 0, item);
+							}
+						}
+
+						// reassign
 						for (let a = 0; a < temp.length; ++a) {
 							temp[a].id = ((start || 0) + a + entries.length).toString();
-							temp[a].renamed = (start !== null);
-							let label = temp[a].text.match(/<!--\s*epub:label\s+(.+)\s*-->/i);
-							if (label !== null) label = label[1].trim();
-
-							if (show_titles || label) addTitle(temp[a], (start === null ? (label || temp[a].title) : (temp[a].id).toString()));
+							addTitle(temp[a]);
 						}
 
 						entries = entries.concat(temp);
@@ -559,15 +663,12 @@
 					else if (!shuffled) {
 						let assigned =  ((start || 0) + entries.length).toString();
 						entry.id = assigned;
-						entry.renamed = (start !== null);
-						let label = entry.text.match(/<!--\s*epub:label\s+(.+)\s*-->/i);
-						if (label !== null) label = label[1].trim();
-						if (show_titles || label) addTitle(entry, (start === null ? (label || entry.title) : assigned));
+						addTitle(entry);
 						entries.push(entry);
 					}
-					
+
 					if (/<!--\s*epub:collection\s+(off|end|stop|false)\s*-->/i.test(entry.text)) collected = false;
-					
+
 					if (/<!--\s*epub:titles\s+(off|end|stop|false)\s*-->/i.test(entry.text)) {
 						show_titles = false;
 						start = null;
@@ -576,7 +677,7 @@
 
 				return entries;
 			};
-			
+
 			var assignIndexes = function(data) {
 				var collect = false;
 				var pages = [];
@@ -586,7 +687,7 @@
 						"id": item.id,
 						"title": item.title,
 						"renamed": item.renamed,
-						"link": convertLink(id), 
+						"link": convertLink(id),
 						"missing": false
 					}
 
@@ -612,26 +713,26 @@
 
 			var redirectLinks = function(data) {
 				for (let item of source) {
-					item.text = item.text = item.text.replace(/\[\[s*([^\]|]+)(?:\|([^\]]*))?\]\]/g, function(m, p1, p2) {
-						let link = (p2 || p1).trim();
-						
+					item.text = item.text = item.text.replace(/(?<!!)\[([^\]]+)\]\(#?([^)]+)\)/g, function(m, p1, p2) {
+						let link = p2.trim();
+
 						if (!(link in data.sections)) {
 							let target = convertLink(Object.keys(data.sections).length);
 							data.sections[link] = {"id": link, "link": target, "missing": true};
 							data.missing[link] = {"title": link, "text": '<em>Section "' + link + '" is missing.</em>'};
 						}
-						
+
 						let section = data.sections[link];
 						let target = (link in data.page_ids) ? data.page_ids[link] : section.link;
 
 						if (data.sections[link].missing) {
-							return '<span class="missing">[[' + p1 + ' (' + link  + ')|' + target + ']]</span>'; 
+							return '<span class="missing">[' + p1 + ' (' + link  + ')](' + target + ')</span>';
 						}
-						
+
 						if (p1.charAt(0) === "!") link = p1.substring(1);
 						else link = (section.renamed) ? section.id : p1;
 
-						return "[[" + link  + "|" + target + "]]";
+						return "[" + link  + "](" + target + ")";
 					});
 				}
 			};
@@ -649,7 +750,7 @@
 					getCover(entry, data);
 					getInclude(entry, data);
 				}
-				
+
 				for (let entry of source) {
 					getSection(entry, data);
 				}
@@ -696,12 +797,12 @@
 				var pad = function(text) {
 					return text.toString().padStart(2, "0");
 				};
-				
+
 				var date = new Date();
-				var text = 
+				var text =
 					[date.getFullYear(), pad(date.getMonth()), pad(date.getDay())].join("-") + "T" +
 					[pad(date.getHours()), pad(date.getMinutes()), pad(date.getSeconds())].join(":") + "Z";
-	
+
 				return text;
 			};
 
@@ -731,7 +832,7 @@
 			return function() {
 				checkValues();
 
-				var meta = 
+				var meta =
 					'\t\t<dc:identifier id="pub-id">' + data.meta.identifier + '</dc:identifier>\n' +
 					'\t\t<dc:title>' + data.meta.title + '</dc:title>\n' +
 					'\t\t<dc:language>' + (("language" in data.meta) ? data.meta.language : "en") + '</dc:language>\n';
@@ -776,7 +877,7 @@
 					console.log("Extension '" + ext + '" not allowed.');
 					return;
 				}
-				
+
 				data.opf += '\t\t<item id="' + path.basename(file) + '" href="' + file + '" media-type="' + type + '"/>\n';
 
 				return true;
@@ -784,7 +885,7 @@
 
 			var copyFile = function(item, dest) {
 				var files = [];
-				
+
 				if (fs.lstatSync(item).isDirectory()) {
 					if (!fs.existsSync(dest)) fs.mkdirSync(dest, {"recursive": true});
 					files = fs.readdirSync(item);
@@ -841,7 +942,7 @@
 			writeFile(path.join(output, "mimetype"), "application/epub+zip");
 
 			// write xml
-			writeFile(path.join(output, "META-INF", "container.xml"), 
+			writeFile(path.join(output, "META-INF", "container.xml"),
 				'<?xml version="1.0"?>\n' +
 				'<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n' +
 				'	<rootfiles>\n' +
@@ -851,7 +952,7 @@
 			);
 
 			// write opf file
-			writeFile(path.join(output, "OEBPS", "package.opf"), 
+			writeFile(path.join(output, "OEBPS", "package.opf"),
 				'<?xml version="1.0"?>\n' +
 				'<package version="3.0"\n' +
 				'         xmlns="http://www.idpf.org/2007/opf"\n' +
@@ -872,7 +973,7 @@
 			);
 
 			// write nav file
-			writeFile(path.join(output, "OEBPS", "nav.xhtml"), 
+			writeFile(path.join(output, "OEBPS", "nav.xhtml"),
 				'<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\n' +
 				'<head>\n' +
 				'	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />\n' +
@@ -885,7 +986,7 @@
 					convertToXHTML(data.nav).trimEnd() + '\n' +
 				'</nav>\n' +
 				'<nav epub:type="landmarks" hidden="">\n' +
-				'	<ol>\n' + 
+				'	<ol>\n' +
 						getTypes(data) +
 				'	</ol>\n' +
 				'</nav>\n' +
@@ -960,7 +1061,7 @@
 			if (checkHelp()) return;
 
 			if (process.argv.length < 3) throw new Error("No input files specified.");
-			
+
 			var source = "";
 			var output = checkOutput() || "story";
 
@@ -976,7 +1077,7 @@
 			catch (e) {
 				throw new Error(e);
 			}
-			
+
 			var ext = process.argv[2].substring(process.argv[2].lastIndexOf(".") + 1).toLowerCase();
 
 			if (ext === "js" || ext === "json") source = convertTiddlyToMarkdown(source, output);
@@ -986,14 +1087,14 @@
 			else if (ext === "md" || ext === "markdown") {
 				console.log("Loading markdown..");
 				if (!graphviz_enabled && !epub_enabled) throw new Error("Nothing to do! Please use --epub or --graphviz flag for conversion.");
-			} 
+			}
 			else throw new Error("Unknown extension type: " + ext);
 
 			source = convertMarkdownToJSON(source);
 
 			if (graphviz_enabled) convertJsonToGraphviz(source, output);
 			if (epub_enabled) convertJsonToEpub(source, output);
-			
+
 			console.log("Conversion succeeded.");
 		}();
 	}();

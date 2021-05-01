@@ -37,7 +37,11 @@
         width: 100%;
         text-align: center;
         font-size: 1.5em;
-        padding-bottom: 1em;
+        margin-bottom: 1em;
+    }
+
+    .section:not(:first-of-type) {
+        margin-top: 3em;
     }
     
     .missing a, .missing a:visited {
@@ -101,6 +105,8 @@ Story intro. Arrive at house with your friends.
 
 Turn to [[2]].
 
+Turn to fixed example in section [[test]].
+
 
 :: 2
 
@@ -110,6 +116,22 @@ Turn to [[2]].
 The front door is locked. You need to look for the key.
 
 If you'd like to check above the door, turn to [[3]]. If you'd like to examine the potted plants beneath the window, turn to [[4]]. If you think that the loose tile on the walkway needs further inspection, turn to [[5]].
+
+
+:: test
+
+<!-- epub:fixed 5 -->
+
+This is fixed at section 5.
+
+Turn to _test 2_ at section [[test 2]].
+
+
+:: test 2
+
+<!-- epub:fixed test + 2 -->
+
+This is 2 sections after _test_, which makes it 7.
 
 
 :: 3
