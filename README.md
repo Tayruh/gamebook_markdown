@@ -559,12 +559,6 @@ Stops collecting sections:
 <!-- epub:collection stop -->
 ```
 
-<<<<<<< HEAD
-=======
-`start`/`stop` are aliases for `begin`/`end`, `true`/`false`, and `on`/`off`.
-
-Be aware that links to sections within a page collection will not work correctly unless titles are displayed, as it will not have a div with an ID to jump to. You'll either need to enable titles via `epub:titles` or use the `epub:label` setting for that section.
->>>>>>> b66c56b7b80f511f5580a979b9c1bcf37becbf64
 
 ### Shuffle
 
@@ -582,7 +576,6 @@ Stops collecting sections:
 <!-- epub:shuffle stop -->
 ```
 
-<<<<<<< HEAD
 Be sure to avoid changing the `epub:title` settings during shuffling as it'll have unpredicable results.
 
 
@@ -668,6 +661,3 @@ There are a few things to be aware of when using fixed sections.
 	This fails because this shuffled block only 
 	includes D and E, not B.
 	```
-=======
-`start`/`stop` are aliases for `begin`/`end`, `true`/`false`, and `on`/`off`.
->>>>>>> b66c56b7b80f511f5580a979b9c1bcf37becbf64
