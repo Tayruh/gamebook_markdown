@@ -23,7 +23,7 @@ This script needs to be run from the command line. The command is run like this:
 gamebook_markdown.exe file1.tw file2.tw file3.tw -o story -g -e
 ```
 
-Any number of input files are allowed, with the exception of TiddlyWiki JSON which only allows one. The type of file is taken from the extension of the first input file. Mixed types are not allowed. The files are combined in the order that they are listed.
+Any number of input files are allowed, with the exception of TiddlyWiki JSON which only allows one. The type of file is taken from the extension of the first input file. Mixed source types are allowed. The files are combined in the order that they are listed.
 
 `-o` or `--output` specifies the project name. Do not use an extension. If the output is `story`, then `story.md` (markdown), `story.dot` (graphviz), and a `story` directory (epub) will be created.
 
@@ -286,6 +286,8 @@ zip.exe -Xr story.epub "META-INF/" "OEBPS/"
 
 ## Conversion
 
+### Markdown
+
 All input formats are converted to standard markdown before being converted to an epub. This documentation uses standard markdown for its examples, but you can use the markup of your input format for convenience.
 
 During conversion all empty lines are removed and paragraphs are wrapped in `<div>` tags assigned the class `paragraph`.
@@ -293,6 +295,10 @@ During conversion all empty lines are removed and paragraphs are wrapped in `<di
 The `<center>` tag is also changed to `<div style="width: 100%; text-align: center">`, since `<center>` is not allowed in the XHTML specifications.
 
 Some simple markdown is also converted to HTML. Namely bold, italic, heading, and link markup.
+
+Standard markdown (CommonMark) also doesn't allow spaces or underscores in links, and so both characters are converted to dashes during the conversion processs. Links are also case insensitive. So `[[Some Link]]` and `[[Some_Link]]` both become `(Some Link)[#some-link]`.
+
+### Missing Links
 
 Any links to sections that don't exist will be wrapped in a span tag and assigned the class `missing`. They will be also written to display the missing section in parenthesis following the link name. 
 

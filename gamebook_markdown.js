@@ -51,7 +51,8 @@
 
 			// convert links
 			text = text.replace(/\[\[((?:(?!\||\]\])[^])+)(?:\|((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2) {
-				return "[" + p1.trim() + "](#" + (p2 ? p2.trim() : p1.trim()) + ")";
+				p1 = p1.replace(/[_ ]/g, '-').toLowerCase().trim();
+				return "[" + p1 + "](#" + (p2 ? p2.trim() : p1) + ")";
 			});
 
 			return text;
@@ -75,8 +76,9 @@
 	var convertTwineToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
 			return text.replace(/\[\[((?:(?!\||<-|->|\]\])[^])+)(?:(\||<-|->)((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2, p3) {
-				if (p2 === "<-") return "[" + p3.trim() + "](#" + p1.trim() + ")";
-				return "[" + p1.trim() + "](#" + (p3 ? p3.trim() : p1.trim()) + ")";
+				p1 = p1.replace(/[_ ]/g, '-').toLowerCase().trim();
+				if (p2 === "<-") return "[" + p3.trim() + "](#" + p1 + ")";
+				return "[" + p1 + "](#" + (p3 ? p3.trim() : p1) + ")";
 			});
 		};
 
@@ -117,8 +119,9 @@
 	var convertTweeToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
 			return text.replace(/\[\[((?:(?!\||<-|->|\]\])[^])+)(?:(\||<-|->)((?:(?!\]\])[^])+))?\]\]/g, function(m, p1, p2, p3) {
-				if (p2 === "<-") return "[" + p3.trim() + "](#" + p1.trim() + ")";
-				return "[" + p1.trim() + "](#" + (p3 ? p3.trim() : p1.trim()) + ")";
+				p1 = p1.replace(/[_ ]/g, '-').toLowerCase().trim();
+				if (p2 === "<-") return "[" + p3.trim() + "](#" + p1 + ")";
+				return "[" + p1 + "](#" + (p3 ? p3.trim() : p1) + ")";
 			});
 		};
 
@@ -148,7 +151,8 @@
 	var convertSadakoToMarkdown = function(source, output) {
 		var convertLinks = function(text) {
 			return text.replace(/\[:((?:(?!@:|:\])[^])+)(?:@:((?:(?!:\])[^])+))?:\]/g, function(m, p1, p2) {
-				return "[" + p1.trim() + "](#" + (p2 ? p2.trim() : p1.trim()) + ")";
+				p1 = p1.replace(/[_ ]/g, '-').toLowerCase().trim();
+				return "[" + p1 + "](#" + (p2 ? p2.trim() : p1) + ")";
 			});
 		};
 
@@ -186,8 +190,9 @@
 			let index = entry.indexOf("\n");
 			let title = entry.substring(0, index).trim();
 			let text = entry.substring(index).trim();
+			let mdref = title.replace(/[_ ]/g, '-').toLowerCase();
 
-			entries.push({"title": title, "text": text });
+			entries.push({"title": title, "mdref": mdref, "text": text });
 		}
 
 		return entries;
@@ -203,14 +208,14 @@
 		};
 
 		var quote = function(text) {
-			if (/\s/.test(text)) return '"' + text.replace(/"/g, '\\"') + '"';
+			if (/\s|[-><]/.test(text)) return '"' + text.replace(/"/g, '\\"') + '"';
 			return text;
 		}
 
 		var getEntries = function(source) {
 			var getEntry = function(entry, entries, missing) {
 				var title = entry.title;
-				var id = quote(title);
+				var id = entry.mdref;
 
 				if (id in entries) throw new Error("Duplicate ID found: " + id);
 
@@ -230,13 +235,12 @@
 				return label;
 			};
 
-			var getLinks = function(source, entries, missing) {
+			var getLinks = function(source) {
 				var links = [];
 
 				source.text.replace(/(?<!!)\[([^\]]+)\]\(#?([^)]+)\)/g, function(match, p1, p2) {
-					var link = p2;
-					if (!(link in entries)) missing[quote(link)] = true;
-					links.push(quote(link));
+					var link = p2.trim().toLowerCase();
+					links.push(link);
 				});
 
 				return (links.length) ? links : null;
@@ -269,6 +273,7 @@
 				for (let item of source) {
 					if (/<!--\s*nograph\s*-->/i.test(item.text)) continue;
 					let entry = getEntry(item, entries, missing);
+					entry.mdref = item.mdref;
 					entry.label = getLabel(item);
 					entry.links = getLinks(item, entries, missing);
 					entry.color = getColor(item);
@@ -308,46 +313,52 @@
 						options += '>';
 					}
 					else if (entry.label !== null) options = 'label="' + entry.title.replace(/"/g, '\\"') + ": " + entry.label. join("\n") + '"';
+					else if (entry.title !== entry.mdref) options = 'label="' + entry.title.replace(/"/g, '\\"') + '"';
 					return options;
 				};
 
 				var graph = "";
 
 				for (let [id, entry] of Object.entries(entries)) {
-					let added = false;
-					if (entry.label || entry.color || entry.flags) {
-						added = true;
-						graph += "\t" + id + " [";
-						let options = getLabel(entry);
+
+					let options = getLabel(entry);
+					if (options)  {
+						graph += "\t" + quote(id) + " [";
+						
 
 						if (entry.color !== null) options += (options.length ? ", " : "") + 'color="' + entry.color + '"';
 						graph += options + "]\n";
 					}
-
-					if (entry.links !== null) graph += "\t" + id + " -> " + entry.links.join(", ") + ";\n\n";
-					else if (!added) graph += "\t" + quote(entry.title) + ";\n\n";
-					else graph += "\n\n";
+					else graph += "\t" + quote(id) + ";\n";
 				}
 
 				return graph;
 			};
 
-			var graphMissing = function(missing) {
-				if (!Object.keys(missing).length) return "";
-
-				var id;
+			var graphMissing = function(entries, missing) {
 				var graph = "";
+				for (let id in entries) {
+					let entry = entries[id];
 
-				for (id in missing) { graph += id + ", "; }
+					if (entry.links === null) continue;
+					let links = [];
+					for (let link of entry.links) {
+						if (!(link in entries)) missing[quote(link)] = true;
+						links.push(quote(link));
+					}
+					graph += "\t" + quote(entry.mdref) + " -> " + links.join(", ") + ";\n";
+				}
 
-				return "\n\t" + graph.substring(0, graph.lastIndexOf(",")).trim() + ' [style=filled, fillcolor="darkgray"]';
+				if (!Object.keys(missing).length) return graph;
+
+				return graph.trimEnd() + "\n\t" + Object.keys(missing).join(", ") + ' [style=filled, fillcolor="darkgray"]';
 			};
 
 			return function() {
-				var graph = "digraph {\n\tnode [shape=box];\n\n";
+				var graph = "digraph {\n\tnode [shape=box];\n";
 
 				graph += graphEntries(entries);
-				graph += graphMissing(missing);
+				graph += graphMissing(entries, missing);
 
 				graph = graph.replace(/\n\n\n/g, "\n\n");
 
@@ -442,7 +453,7 @@
 					'</head>\n' +
 					'<body>\n';
 
-				var link = data.sections[entry.title].link;
+				var link = data.sections[entry.mdref].link;
 
 				var scripted = (/<script\s+/i.test(entry.text)) ? ' properties="scripted"' : "";
 
@@ -469,7 +480,7 @@
 				var type = match[1].trim().toLowerCase();
 
 				if (type in data.types) console.error("Only one '" + type + "' epub:type should be defined.");
-				data.types[type] = entry.title;
+				data.types[type] = entry.mdref;
 			};
 
 			var getNav = function(entry, data) {
@@ -519,7 +530,6 @@
 						if (label !== null) label = label[1].trim();
 
 						title = (start === null ? (label || entry.title) : entry.id);
-						//entry.text = '<div class="section-title" id="' + entry.id + '">' + title + '</div>\n' + entry.text;
 						entry.text = '<div class="section-title">' + title + '</div>\n' + entry.text;
 					}
 
@@ -568,7 +578,7 @@
 
 						// shuffle
 						for (let item of shuffled_entries) {
-							sections[item.title] = item;
+							sections[item.mdref] = item;
 
 							if (start !== null && item.fixed !== null) {
 								if (item.fixed.length === 1) fixed.push(item);
@@ -595,7 +605,7 @@
 									console.log("Fixed anchor '" + anchor.title + "' assigned to '" + item.title + "' is not a fixed section.");
 									item.fixed = null;
 								}
-								else if (anchor.title === item.title) {
+								else if (anchor.mdref === item.mdref) {
 									console.log("Fixed anchor for '" + item.title + "' is self-referencing.");
 								}
 								else if (anchor.fixed.length > 1) continue;
@@ -683,8 +693,9 @@
 				var pages = [];
 
 				for (let [id, item] of Object.entries(source)) {
-					data.sections[item.title] = {
+					data.sections[item.mdref] = {
 						"id": item.id,
+						"mdref": item.mdref,
 						"title": item.title,
 						"renamed": item.renamed,
 						"link": convertLink(id),
@@ -694,11 +705,11 @@
 					if (item.collected) {
 						if (!collect) {
 							collect = convertLink(id);
-							pages.push({ "title": item.title, "id": collect, "text": "", "link": collect});
-							data.sections[item.title].link = collect;
+							pages.push({ "title": item.title, "mdref": item.mdref, "id": collect, "text": "", "link": collect});
+							data.sections[item.mdref].link = collect;
 						}
 						pages[pages.length - 1].text += item.text + "\n\n";
-						data.page_ids[item.title] = pages[pages.length - 1].link + "#" + item.id
+						data.page_ids[item.mdref] = pages[pages.length - 1].link + "#" + item.id
 					}
 					else {
 						collect = false;
@@ -714,12 +725,12 @@
 			var redirectLinks = function(data) {
 				for (let item of source) {
 					item.text = item.text = item.text.replace(/(?<!!)\[([^\]]+)\]\(#?([^)]+)\)/g, function(m, p1, p2) {
-						let link = p2.trim();
+						let link = p2.trim().toLowerCase();
 
 						if (!(link in data.sections)) {
 							let target = convertLink(Object.keys(data.sections).length);
-							data.sections[link] = {"id": link, "link": target, "missing": true};
-							data.missing[link] = {"title": link, "text": '<em>Section "' + link + '" is missing.</em>'};
+							data.sections[link] = {"title": link, "mdref": link, "link": target, "renamed": false, "missing": true};
+							data.missing[link] = {"title": link, "mdref": link, "text": '<em>Section "' + link + '" is missing.</em>'};
 						}
 
 						let section = data.sections[link];
@@ -730,7 +741,7 @@
 						}
 
 						if (p1.charAt(0) === "!") link = p1.substring(1);
-						else link = (section.renamed) ? section.id : p1;
+						else link = (section.renamed) ? section.id : section.title;
 
 						return "[" + link  + "](" + target + ")";
 					});
@@ -1062,35 +1073,35 @@
 
 			if (process.argv.length < 3) throw new Error("No input files specified.");
 
-			var source = "";
 			var output = checkOutput() || "story";
 
 			var graphviz_enabled = checkGraphviz();
 			var epub_enabled = checkEpub();
+			var source = [];
 
 			try {
 				for (let a = 2; a < process.argv.length; ++a) {
 					let file = fs.readFileSync(process.argv[a]);
-					source += file.toString() + "\n";
+					let input = file.toString() + "\n";
+
+					let ext = process.argv[a].substring(process.argv[a].lastIndexOf(".") + 1).toLowerCase();
+
+					if (ext === "js" || ext === "json") input = convertTiddlyToMarkdown(input, output);
+					else if (ext === "sko") input = convertSadakoToMarkdown(input, output);
+					else if (ext === "tw" || ext === "twee") input = convertTweeToMarkdown(input, output);
+					else if (ext === "html") input = convertTwineToMarkdown(input, output);
+					else if (ext === "md" || ext === "markdown") {
+						console.log("Loading markdown..");
+						if (!graphviz_enabled && !epub_enabled) throw new Error("Nothing to do! Please use --epub or --graphviz flag for conversion.");
+					}
+					else throw new Error("Unknown extension type: " + ext);
+		
+					source = source.concat(convertMarkdownToJSON(input));
 				}
 			}
 			catch (e) {
 				throw new Error(e);
 			}
-
-			var ext = process.argv[2].substring(process.argv[2].lastIndexOf(".") + 1).toLowerCase();
-
-			if (ext === "js" || ext === "json") source = convertTiddlyToMarkdown(source, output);
-			else if (ext === "sko") source = convertSadakoToMarkdown(source, output);
-			else if (ext === "tw" || ext === "twee") source = convertTweeToMarkdown(source, output);
-			else if (ext === "html") source = convertTwineToMarkdown(source, output);
-			else if (ext === "md" || ext === "markdown") {
-				console.log("Loading markdown..");
-				if (!graphviz_enabled && !epub_enabled) throw new Error("Nothing to do! Please use --epub or --graphviz flag for conversion.");
-			}
-			else throw new Error("Unknown extension type: " + ext);
-
-			source = convertMarkdownToJSON(source);
 
 			if (graphviz_enabled) convertJsonToGraphviz(source, output);
 			if (epub_enabled) convertJsonToEpub(source, output);
